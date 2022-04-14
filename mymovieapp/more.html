@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #container{
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap:20px;
+        }
+    </style>
+</head>
+<body>
+    <input placeholder="search for your the movie" id="search" oninput="debouncing(main,3000)">
+    <button id="old">old-new</button>
+    <button id="new">new-old</button>
+    <button onclick="window.location.href='./index.html'">Go-back</button>
+    <div id="container"></div>
+    <div id="container1"></div>
+</body>
+</html>
+<script>
+     
+     let arr11=[];
+    async function jai()
+    {
+        let value=document.getElementById("search").value
+        try{
+           
+            let res = await fetch(`https://www.omdbapi.com/?apikey=1a9b4ff2&s=${value}`)
+            let data= await res.json()
+            // console.log(data.Search)
+            let res2 =await fetch(`https://www.omdbapi.com/?t=${value}&apikey=1a9b4ff2`)
+            let data22 = await res2.json()
+          
+            arr11.push(data22)
+            // localStorage.setItem("tempo",JSON.stringify(arr))
+            return data.Search
+            
+        }
+        catch(error)
+        {
+            console.log(error)
+            console.log("error")
+        }
+    }
+    function mydisplay(data)
+    {
+        document.getElementById("container").innerHTML=null;
+        data.map(function(ele,ind,arr){
+        let box=document.createElement("div");
+        let img1=document.createElement("img");
+        img1.style.height="450px"
+        img1.style.width="300px"
+        img1.src= `${ele.Poster}`;
+        let title=document.createElement("p");
+        title.innerText=` ${ele.Title}`;
+        let actor=document.createElement("p");
+        actor.innerText= `Actors: ${ele.Actors}`;
+        let imdb=document.createElement("p");
+        imdb.innerText= `Type: ${ele.Type}`
+        let act=document.createElement("p");
+        act.innerText= `Year: ${ele.Year}`;
+        box.append(img1,title,actor,imdb,act);
+        box.addEventListener("click",function(){
+            // console.log(data[ind])
+            // console.log(arr11[0].Actors)
+            // console.log(arr11[0].imdbRating)
+            let obj1=data[ind]
+            obj1.Actors=arr11[0].Actors
+            obj1.imdb=arr11[0].imdbRating
+            // let obj2=Object.create(data[ind])
+            let arr22=[];
+            arr22.push(obj1)
+            console.log(arr22)
+            localStorage.setItem("movie",JSON.stringify(arr22))
+            window.location.href="./setail.html"
+
+        })
+        document.getElementById("container").append(box)
+        })
+    }
+
+    function oldfirst(data)
+    {
+        //console.log(data)
+
+        data.sort(function(a,b){
+            return a.Year - b.Year
+        })
+
+        mydisplay(data)
+    }
+    
+    function newfirst(data)
+    {
+        data.sort(function(a,b){
+            return b.Year - a.Year
+        })
+        mydisplay(data)
+    }
+
+    async function main()
+    {
+        try{
+            let res= await jai()
+            //console.log(res)
+            if(res==undefined)
+            {
+                document.getElementById("container1").innerHTML="";
+                console.log("hello")
+               let img=document.createElement("img");
+              img.src="https://media0.giphy.com/media/TUQ6hOPCUifdH1KWiz/200w.webp?cid=ecf05e47nnbtwbskbppgf4lhlr57guhgxpn9z0o9htertvou&rid=200w.webp&ct=g";
+              img.style.height="600px"
+              img.style.width="1000px";
+              img.style.marginLeft="17%"
+              img.setAttribute("id","errorimg")
+              img.style.display="block"
+              document.getElementById("container1").style.display="block";
+              document.getElementById("container").style.display="none";
+             document.getElementById("container1").append(img)
+            }
+            else if(res.length<=12)
+            {
+                mydisplay(res)
+                document.getElementById("old").addEventListener("click",function(){
+                oldfirst(res)
+                
+            })
+
+            document.getElementById("new").addEventListener("click",function(){
+                newfirst(res)
+                
+            })
+            document.getElementById("container1").style.display="none";
+            document.getElementById("container").style.display="grid";
+            }
+        }
+        catch(error)
+        {
+            console.log(error)
+        }
+
+    }
+    let timerid;
+    function debouncing(data,delay)
+    {
+        if(timerid!=undefined)
+        {
+            clearTimeout(timerid)
+        }
+        timerid=setTimeout(function(){
+            data()
+        },delay)
+    }
+</script>

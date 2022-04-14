@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #container{
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            grid-template-rows: repeat(5,390px);
+            gap:20px;
+            text-align: center;
+        }
+    </style>
+    
+</head>
+<body>
+    <h1>Trending Now</h1>
+    <button onclick="window.location.href='./index.html'">Go back</button>
+    <div id="container"></div>
+    
+</body>
+</html>
+<script>
+
+    let id=0;
+    //for image
+    //https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg
+    async function popular()
+    {
+        try{
+            let res=await fetch("https://api.themoviedb.org/3/movie/popular?api_key=b52251e64110d8a460f6ce4ee06ea9f8&language=en-US&page=1")
+            let data= await res.json()
+            console.log(data.results)
+            append(data.results)
+        }
+        catch(error)
+        {
+            console.log(error)
+        }
+    }
+    popular()
+
+    // fetch("https://api.themoviedb.org/3/movie/popular?api_key=b52251e64110d8a460f6ce4ee06ea9f8&language=en-US&page=1")
+    // .then(function(res){
+    //     res.json().then(function(res1){
+    //         console.log(res1.results)
+    //     })
+    // })
+    // .catch(function(err){
+    //     console.log(err)
+    // })
+
+    function append(data)
+    {
+        document.getElementById("container").innerHTML="";
+        data.map(function(ele,ind,arr){
+            data[ind].id1=id++;
+            let box=document.createElement("div")
+            let image=document.createElement("img")
+            image.src=`https://image.tmdb.org/t/p/w200${ele.poster_path}`
+            let name=document.createElement("p");
+            name.innerText=ele.original_title;
+            let btn=document.createElement("button")
+            btn.innerText="Not Intrested";
+            btn.addEventListener("click",function(){
+                removeitm(ele.id1,data)
+            })
+            box.append(image,name,btn)
+            document.getElementById("container").append(box)
+        })
+    }
+//remember slice does not alter orginal array only give shalow array just for print
+//splice alters the original array so for removing we should use splice
+function removeitm(ind,data)
+{
+    for(let i=0;i<data.length;i++)
+    {
+        if(data[i].id1==ind)
+        {
+            data.splice(i,1)
+        }
+    }
+    append(data)
+
+}
+</script>

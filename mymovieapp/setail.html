@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="container"></div>
+</body>
+</html>
+<script>
+    let pdp=JSON.parse(localStorage.getItem("movie"))
+    
+display(pdp)
+
+    function display(res)
+{
+    document.getElementById("container").innerHTML="";
+    res.forEach(function(ele,ind,arr){
+        let box=document.createElement("div");
+        let img1=document.createElement("img");
+        img1.src= `${ele.Poster}`;
+        let title=document.createElement("p");
+        title.innerText=` ${ele.Title}`;
+        let act=document.createElement("p");
+        act.innerText= `Actors: ${ele.Actors}`;
+        let year=document.createElement("p");
+        year.innerText= `Year: ${ele.Year}`;
+        let imdb=document.createElement("p");
+        imdb.innerText= `IMdb ${ele.imdb}`;
+        console.log(ele.imdb > 8.5)
+        if(ele.imdb >=8.5)
+        {
+            var boxi= document.createElement("div");
+            let recom=document.createElement("p");
+            recom.innerText="Recomended!"
+            boxi.style.height="30px"
+            boxi.style.width="100px"
+            boxi.style.background="green";
+            boxi.style.margin="auto"
+            boxi.append(recom);
+            box.append(img1,title,act,year,imdb,boxi);
+        }
+        else
+        {
+         box.append(img1,title,act,year,imdb);
+        }
+        document.getElementById("container").append(box)
+    })
+}
+
+setTimeout(function(){
+    window.location.href="./more.html"
+},6000)
+
+</script>
